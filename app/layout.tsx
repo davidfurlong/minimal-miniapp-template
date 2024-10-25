@@ -5,13 +5,23 @@ if (!process.env.NEXT_PUBLIC_VERCEL_URL) {
 }
 
 const VERCEL_URL = process.env.NEXT_PUBLIC_VERCEL_URL
-  ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+  ? `http${
+      process.env.NEXT_PUBLIC_VERCEL_URL.startsWith("localhost") ? "" : "s"
+    }://${process.env.NEXT_PUBLIC_VERCEL_URL}`
   : "";
 
 export const metadata: Metadata = {
   title: "Miniapp",
   description: "Some description",
+  openGraph: {
+    title: "Miniapp",
+    description: "Some description",
+    url: VERCEL_URL,
+    siteName: "Miniapp",
+    images: [`${VERCEL_URL}/frame-image.png`],
+  },
   other: {
+    // alternatively, use `fetchMetadata` from `frames.js/next` to fetch a frame from remote
     "fc:frame": "vNext",
     "fc:frame:image": `${VERCEL_URL}/frame-image.png`,
     "fc:frame:button:1": "Open Miniapp",

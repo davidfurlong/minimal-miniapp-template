@@ -1,1 +1,1 @@
-# Minimal Miniapp example
+# Minimal Farcaster Miniapp template

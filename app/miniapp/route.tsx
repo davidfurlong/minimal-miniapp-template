@@ -1,16 +1,18 @@
 import { NextResponse } from "next/server";
-import airstack from "@airstack/frames";
-import { encrypt } from "@/lib";
+import { init, validateFramesMessage } from "@airstack/frames";
+import { encrypt } from "@/jwt";
 
 if (!process.env.AIRSTACK_API_KEY) {
   throw new Error("AIRSTACK_API_KEY is not set");
 }
 
 // init with your airstack api key
-airstack.init(process.env.AIRSTACK_API_KEY);
+init(process.env.AIRSTACK_API_KEY);
 
 const VERCEL_URL = process.env.NEXT_PUBLIC_VERCEL_URL
-  ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+  ? `http${
+      process.env.NEXT_PUBLIC_VERCEL_URL.startsWith("localhost") ? "" : "s"
+    }://${process.env.NEXT_PUBLIC_VERCEL_URL}`
   : "";
 
 // initiate composer action metadata
@@ -30,11 +32,9 @@ export function GET() {
 }
 
 export async function POST(req: Request, res: Response) {
-  const { isValid, message } = await airstack.validateFramesMessage(
-    await req.json()
-  );
+  const { isValid, message } = await validateFramesMessage(await req.json());
 
-  if (!isValid) {
+  if (!isValid || !message) {
     return NextResponse.json({ message }, { status: 400 });
   }
 
